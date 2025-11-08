@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Вход</title>
+  <title>Регистрация</title>
   <style>
     body {
       margin: 0;
@@ -18,7 +18,7 @@
       overflow: hidden;
     }
 
-    .login-container {
+    .register-container {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -28,15 +28,11 @@
       max-width: 400px;
       border: 1px solid rgba(200, 210, 220, 0.4);
       box-shadow:
-        0 8px 32px rgba(100, 120, 140, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-      position: relative;
-      animation: fadeIn 0.5s ease-out;
-      
-      box-shadow:
         0 8px 32px rgba(100,120,140,0.08),
         inset 0 0 0 1px rgba(255,255,255,0.6),
         0 0 0 1px rgba(9,105,218,0.2);
+      position: relative;
+      animation: fadeIn 0.5s ease-out;
       animation: contourPulse 8s ease-in-out infinite;
     }
 
@@ -74,12 +70,12 @@
 
     .input-group:nth-child(2) { animation-delay: 0.15s; }
     .input-group:nth-child(3) { animation-delay: 0.3s; }
+    .input-group:nth-child(4) { animation-delay: 0.45s; }
 
     @keyframes fadeInItem {
       to { opacity: 1; transform: translateY(0); }
     }
 
-    
     .input-wrapper {
       position: relative;
       margin-top: 20px;
@@ -119,7 +115,6 @@
       font-weight: 600;
     }
 
-    
     .input-wrapper input:focus {
       box-shadow: 0 1px 0 0 #0969da;
     }
@@ -138,7 +133,7 @@
       letter-spacing: 0.3px;
       box-shadow: 0 4px 12px rgba(118, 94, 192, 0.25);
       opacity: 0;
-      animation: fadeInItem 0.5s ease-out 0.45s forwards;
+      animation: fadeInItem 0.5s ease-out 0.6s forwards;
     }
 
     button:hover {
@@ -155,7 +150,7 @@
       text-align: center;
       font-size: 14px;
       opacity: 0;
-      animation: fadeInItem 0.5s ease-out 0.6s forwards;
+      animation: fadeInItem 0.5s ease-out 0.75s forwards;
     }
 
     .links a {
@@ -181,33 +176,67 @@
       width: 100%;
     }
 
-    
     input::placeholder {
       opacity: 0;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Войти в аккаунт</h1>
-    <form id="loginForm">
+  <div class="register-container">
+    <h1>Создать аккаунт</h1>
+    <form id="registerForm">
       <div class="input-group">
         <div class="input-wrapper">
-          <input type="text" id="email" name="email" required autocomplete="username" placeholder=" ">
+          <input type="text" id="name" name="name" required autocomplete="name" placeholder=" ">
+          <label for="name">Имя</label>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-wrapper">
+          <input type="email" id="email" name="email" required autocomplete="username" placeholder=" ">
           <label for="email">Email</label>
         </div>
       </div>
       <div class="input-group">
         <div class="input-wrapper">
-          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder=" ">
+          <input type="password" id="password" name="password" required autocomplete="new-password" placeholder=" ">
           <label for="password">Пароль</label>
         </div>
       </div>
-      <button type="submit">Войти</button>
+      <div class="input-group">
+        <div class="input-wrapper">
+          <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password" placeholder=" ">
+          <label for="confirmPassword">Подтвердите пароль</label>
+        </div>
+      </div>
+      <button type="submit">Зарегистрироваться</button>
     </form>
     <div class="links">
-      <a href="registr.html" onclick="register()">Ещё нет аккаунта? Зарегистрироваться</a>
+      <a href="identification.html" onclick="login()">Уже есть аккаунт? Войти</a>
     </div>
   </div>
+
+  <script>
+    function register() {
+      
+      window.location.href = 'registr.html';
+    }
+
+    function login() {
+      window.location.href = 'login.html';
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const pass = document.getElementById('password').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      if (pass !== confirmPass) {
+        alert('Пароли не совпадают');
+        return;
+      }
+      
+      alert('Регистрация успешна!');
+    });
+  </script>
 </body>
 </html>
