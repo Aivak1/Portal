@@ -217,26 +217,9 @@
   </div>
 
   <script>
-    function register() {
-      
-      window.location.href = 'registr.html';
-    }
-
     function login() {
-      window.location.href = 'login.html';
+      window.location.href = 'identification.html';
     }
-
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const pass = document.getElementById('password').value;
-      const confirmPass = document.getElementById('confirmPassword').value;
-      if (pass !== confirmPass) {
-        alert('Пароли не совпадают');
-        return;
-      }
-      
-      alert('Регистрация успешна!');
-    });
   </script>
 </body>
-</html>
+</html> 
