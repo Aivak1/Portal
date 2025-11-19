@@ -3,133 +3,458 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Регистрация</title>
+  <title>Система управления</title>
   <style>
+    :root {
+      --primary: #0969da; --accent: #4bc9c1; --accent-alt: #765ec0;
+      --bg-light: rgba(255, 255, 255, 0.7); --shadow-light: 0 8px 32px rgba(100,120,140,0.08);
+      --border-light: rgba(200, 210, 220, 0.4); --text: #1f2937; --text-muted: #6e7781;
+      --admin: #e76f51; --employee: #2a9d8f;
+    }
+    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #f9fbfd 0%, #f0f4f8 100%);
-      color: #24292f;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
+      color: var(--text); display: flex; flex-direction: column; align-items: center;
+      padding: 32px 16px; min-height: 100vh; overflow-x: hidden;
     }
-    .register-container {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 40px;
-      border-radius: 20px;
-      width: 100%;
-      max-width: 400px;
-      border: 1px solid rgba(200, 210, 220, 0.4);
-      box-shadow: 0 8px 32px rgba(100,120,140,0.08), inset 0 0 0 1px rgba(255,255,255,0.6), 0 0 0 1px rgba(9,105,218,0.2);
-      position: relative;
-      animation: fadeIn 0.5s ease-out, contourPulse 8s ease-in-out infinite;
-    }
-    @keyframes contourPulse {
-      0%, 100% { box-shadow: 0 8px 32px rgba(100,120,140,0.08), inset 0 0 0 1px rgba(255,255,255,0.6), 0 0 0 1px rgba(9,105,218,0.2); }
-      50% { box-shadow: 0 8px 32px rgba(100,120,140,0.08), inset 0 0 0 1px rgba(255,255,255,0.6), 0 0 0 1px rgba(75,201,193,0.35); }
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    h1 {
-      font-size: 24px; font-weight: 600; margin-bottom: 32px; text-align: center; color: #1f2937;
-      opacity: 0; animation: fadeInTitle 0.6s ease-out forwards;
+    .page-title {
+      font-size: 28px; font-weight: 600; margin-bottom: 32px; text-align: center;
+      letter-spacing: -0.5px; opacity: 0; animation: fadeInTitle 0.8s ease-out forwards;
     }
     @keyframes fadeInTitle { to { opacity: 1; } }
-    .input-group {
-      margin-bottom: 28px; opacity: 0; animation: fadeInItem 0.5s ease-out forwards;
+    .card {
+      background: var(--bg-light); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      padding: 32px; border-radius: 20px; width: 100%; max-width: 600px;
+      border: 1px solid var(--border-light); box-shadow: var(--shadow-light), 0 0 0 1px rgba(9,105,218,0.2);
+      margin-bottom: 28px; animation: fadeInCard 0.6s ease-out;
     }
-    .input-group:nth-child(2) { animation-delay: 0.15s; }
-    .input-group:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes fadeInItem { to { opacity: 1; transform: translateY(0); } }
-    .input-wrapper {
-      position: relative; margin-top: 20px;
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); }
     }
-    .input-wrapper input {
-      width: 100%; padding: 14px 0 8px 0; border: none; border-bottom: 1px solid #d0d7de;
-      background: transparent; color: #1f2937; font-size: 16px; outline: none;
+    .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+    .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 6px 12px; background: #f5f8fa; border: 1px solid #d0d7de; border-radius: 14px;
+      color: var(--text-muted); font-size: 14px; cursor: pointer; transition: all 0.2s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: #eaeef2; color: var(--primary); border-color: var(--primary);
+    }
+    .task-list { list-style: none; padding: 0; margin: 0; }
+    .task-item {
+      padding: 14px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+    }
+    .task-item:last-child { border-bottom: none; }
+    .task-text { flex: 1; margin-right: 12px; }
+    .task-status {
+      background: #ddf4ff; color: var(--primary); padding: 4px 10px; border-radius: 12px;
+      font-size: 13px; font-weight: 500; cursor: pointer; user-select: none;
+      transition: background 0.3s ease;
+    }
+    .task-status:hover { background: #cceeff; }
+    .create-task { display: flex; gap: 10px; margin-top: 20px; }
+    .create-task input {
+      flex: 1; padding: 12px 14px; border: 1px solid #d0d7de; border-radius: 12px; font-size: 15px; outline: none;
       transition: border-color 0.3s ease;
     }
-    .input-wrapper input:focus { border-bottom-color: #0969da; }
-    .input-wrapper label {
-      position: absolute; top: 14px; left: 0; font-size: 16px; color: #6e7781;
-      pointer-events: none; transition: all 0.3s ease;
+    .create-task input:focus { border-color: var(--primary); }
+    .create-task button {
+      padding: 12px 18px; background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+      color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    .input-wrapper input:focus ~ label,
-    .input-wrapper input:not(:placeholder-shown) ~ label {
-      top: -2px; font-size: 13px; color: #0969da; font-weight: 600;
+    .create-task button:hover { transform: scale(1.03); }
+    .news-feed { display: flex; flex-direction: column; gap: 18px; }
+    .news-item {
+      background: #f9fbfd; padding: 16px; border-radius: 14px; border-left: 3px solid var(--accent);
+      font-size: 15px; color: var(--text);
     }
-    button {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, #765ec0, #4bc9c1);
-      color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 600;
-      cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.3px;
-      box-shadow: 0 4px 12px rgba(118, 94, 192, 0.25);
-      opacity: 0; animation: fadeInItem 0.5s ease-out 0.6s forwards;
+    .news-item time { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+    .publish-form { display: flex; gap: 10px; margin-top: 20px; }
+    .publish-form textarea {
+      flex: 1; padding: 12px 14px; border: 1px solid #d0d7de; border-radius: 12px; font-size: 15px;
+      outline: none; resize: none; height: 60px; transition: border-color 0.3s ease;
     }
-    button:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(118, 94, 192, 0.4); }
-    .links {
-      margin-top: 24px; text-align: center; font-size: 14px;
-      opacity: 0; animation: fadeInItem 0.5s ease-out 0.75s forwards;
+    .publish-form textarea:focus { border-color: var(--primary); }
+    .publish-form button {
+      padding: 12px 18px; background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+      color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    .links a {
-      color: #0969da; text-decoration: none; position: relative; padding-bottom: 2px;
+    .publish-form button:hover { transform: scale(1.03); }
+    
+    /* Стили для формы входа */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
-    .links a::after {
-      content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1.5px;
-      background: currentColor; border-radius: 1px; transition: width 0.4s ease;
+    .login-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: var(--primary);
+      text-align: center;
     }
-    .links a:hover::after { width: 100%; }
-    input::placeholder { opacity: 0; }
+    .role-selector {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      width: 100%;
+    }
+    .role-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .role-option:hover {
+      border-color: var(--primary);
+      background-color: #f8fafc;
+    }
+    .role-option.selected {
+      border-color: var(--primary);
+      background-color: #e6f4ff;
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
+    }
+    .role-option.admin h3 {
+      color: var(--admin);
+    }
+    .role-option.employee h3 {
+      color: var(--employee);
+    }
+    .role-option p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .login-form {
+      width: 100%;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.2);
+    }
+    .login-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), #0b5fb4);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+    .login-btn:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #0b5fb4, #0969da);
+    }
+    .login-btn:active {
+      transform: translateY(0);
+    }
+    .logout-btn {
+      padding: 8px 16px;
+      background: #f8f9fa;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+    .logout-btn:hover {
+      background: #e9ecef;
+    }
+    .admin-controls {
+      background: #fff9f9;
+      border-left: 4px solid var(--admin);
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 20px;
+    }
+    .admin-controls h3 {
+      margin-top: 0;
+      color: var(--admin);
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .user-details {
+      flex: 1;
+    }
+    .user-name {
+      font-weight: 600;
+      margin: 0;
+    }
+    .user-role {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .credentials-info {
+      background: #e6f4ff;
+      border-left: 4px solid var(--primary);
+      padding: 15px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none; /* Скрыто по умолчанию */
+    }
+    .credentials-info h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+    .credentials-list {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+    .credentials-list li {
+      margin-bottom: 8px;
+    }
+    .show-credentials {
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      margin-top: 10px;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
-  <div class="register-container">
-    <h1>Создать аккаунт</h1>
-    <form id="registerForm" onsubmit="handleSubmit(event)">
-      <div class="input-group">
-        <div class="input-wrapper">
-          <input type="text" id="name" name="name" required autocomplete="name" placeholder=" ">
-          <label for="name">Имя</label>
+  <div id="loginPage">
+    <h1 class="page-title">Система управления</h1>
+    <div class="login-container">
+      <h2 class="login-title">Вход в систему</h2>
+      
+      <div class="credentials-info" id="credentialsInfo">
+        <h3>Тестовые учетные данные</h3>
+        <ul class="credentials-list">
+          <li><strong>Администратор:</strong> admin / admin123</li>
+          <li><strong>Сотрудник:</strong> employee / emp123</li>
+        </ul>
+      </div>
+      
+      <div class="role-selector">
+        <div class="role-option admin" onclick="selectRole('admin')">
+          <h3>Администратор</h3>
+          <p>Полный доступ к системе</p>
+        </div>
+        <div class="role-option employee" onclick="selectRole('employee')">
+          <h3>Сотрудник</h3>
+          <p>Ограниченный доступ</p>
         </div>
       </div>
-      <div class="input-group">
-        <div class="input-wrapper">
-          <input type="email" id="email" name="email" required autocomplete="username" placeholder=" ">
-          <label for="email">Email</label>
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Имя пользователя</label>
+          <input type="text" id="username" placeholder="Введите имя" required>
         </div>
-      </div>
-      <div class="input-group">
-        <div class="input-wrapper">
-          <input type="password" id="password" name="password" required autocomplete="new-password" placeholder=" ">
+        <div class="form-group">
           <label for="password">Пароль</label>
+          <input type="password" id="password" placeholder="Введите пароль" required>
+        </div>
+        <button type="submit" class="login-btn">Войти</button>
+      </form>
+      
+      <div class="show-credentials" onclick="toggleCredentials()">
+        Показать тестовые данные
+      </div>
+    </div>
+  </div>
+
+  <div id="dashboardPage" style="display: none;">
+    <h1 class="page-title">Рабочая панель</h1>
+    
+    <div class="user-info">
+      <div class="avatar" id="userAvatar">U</div>
+      <div class="user-details">
+        <p class="user-name" id="userName">Имя пользователя</p>
+        <p class="user-role" id="userRole">Роль пользователя</p>
+      </div>
+      <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
+    
+    <div class="card">
+      <h2>Задачи</h2>
+      <div class="filters">
+        <button class="filter-btn active">Все</button>
+        <button class="filter-btn">Активные</button>
+        <button class="filter-btn">Выполненные</button>
+      </div>
+      <ul class="task-list">
+        <li class="task-item">
+          <span class="task-text">Сделать дизайн главной страницы</span>
+          <span class="task-status" onclick="toggleStatus(this)">Активно</span>
+        </li>
+        <li class="task-item">
+          <span class="task-text">Подключить базу данных пользователей</span>
+          <span class="task-status" onclick="toggleStatus(this)">Выполнено</span>
+        </li>
+      </ul>
+      <div class="create-task">
+        <input type="text" id="newTaskInput" placeholder="Новая задача..." />
+        <button onclick="addTask()">Добавить</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Новости</h2>
+      <div class="news-feed">
+        <div class="news-item">
+          <time>10 ноября 2025</time>
+          <p>Обновлён интерфейс регистрации — теперь с анимацией и плавной подсветкой.</p>
+        </div>
+        <div class="news-item">
+          <time>9 ноября 2025</time>
+          <p>Реализована авторизация через JWT с 15-минутным токеном.</p>
         </div>
       </div>
-      <button type="submit">Зарегистрироваться</button>
-    </form>
-    <div class="links">
-      <a href="login.html">Уже есть аккаунт? Войти</a>
+      <div class="publish-form">
+        <textarea id="newsInput" placeholder="Напишите новость..."></textarea>
+        <button onclick="publishNews()">Опубликовать</button>
+      </div>
+      
+      <div id="adminControls" class="admin-controls" style="display: none;">
+        <h3>Администраторские функции</h3>
+        <p>Доступ к управлению пользователями, настройкам системы и отчетам.</p>
+        <button class="create-task button" style="background: var(--admin); margin-top: 10px;" onclick="showAdminPanel()">Открыть панель управления</button>
+      </div>
     </div>
   </div>
 
   <script>
-    async function handleSubmit(e) {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
-      const res = await fetch('/api/register', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+    // Примитивные учетные данные
+    const users = {
+      admin: {
+        username: 'admin',
+        password: 'admin123',
+        role: 'admin'
+      },
+      employee: {
+        username: 'employee',
+        password: 'emp123',
+        role: 'employee'
+      }
+    };
+    
+    // Функция выбора роли
+    function selectRole(role) {
+      document.querySelectorAll('.role-option').forEach(option => {
+        option.classList.remove('selected');
       });
-      const result = await res.json();
-      if (result.success) {
-        window.location.href = result.redirect;
+      document.querySelector(`.role-option.${role}`).classList.add('selected');
+      document.getElementById('username').focus();
+    }
+    
+    // Функция обработки входа
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const selectedRole = document.querySelector('.role-option.selected')?.classList[1];
+      
+      if (!selectedRole) {
+        alert('Пожалуйста, выберите роль');
+        return;
+      }
+      
+      // Проверка учетных данных
+      const user = users[username];
+      
+      if (user && user.password === password && user.role === selectedRole) {
+        // Сохраняем данные пользователя в localStorage
+        localStorage.setItem('currentUser', JSON.stringify({
+          username: username,
+          role: selectedRole
+        }));
+        
+        // Перенаправляем на main.html
+        window.location.href = 'main.html';
       } else {
-        alert(result.error);
+        alert('Неверное имя пользователя, пароль или роль');
       }
     }
+    
+    // Функция выхода
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'index.html';
+    }
+    
+    // Функция проверки авторизации
+    function checkAuth() {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        // Если пользователь уже авторизован, перенаправляем на main.html
+        window.location.href = 'main.html';
+      }
+    }
+    
+    // Функция переключения видимости тестовых данных
+    function toggleCredentials() {
+      const credentialsInfo = document.getElementById('credentialsInfo');
+      const button = document.querySelector('.show-credentials');
+      
+      if (credentialsInfo.style.display === 'block') {
+        credentialsInfo.style.display = 'none';
+        button.textContent = 'Показать тестовые данные';
+      } else {
+        credentialsInfo.style.display = 'block';
+        button.textContent = 'Скрыть тестовые данные';
+      }
+    }
+    
+    // Проверяем авторизацию при загрузке
+    document.addEventListener('DOMContentLoaded', checkAuth);
   </script>
 </body>
 </html>
