@@ -181,7 +181,6 @@
   </div>
 
   <script>
-    // Функция получения данных пользователя
     function getUserData() {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
@@ -190,7 +189,6 @@
       return null;
     }
     
-    // Функция обновления информации о пользователе
     function updateUserInfo() {
       const user = getUserData();
       if (!user) {
@@ -202,7 +200,6 @@
       document.getElementById('userRole').textContent = user.role === 'admin' ? 'Администратор' : 'Сотрудник';
       document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
       
-      // Показываем админ-панель только для администратора
       const adminControls = document.getElementById('adminControls');
       if (user.role === 'admin') {
         adminControls.style.display = 'block';
@@ -211,18 +208,15 @@
       }
     }
     
-    // Функция выхода
     function logout() {
       localStorage.removeItem('currentUser');
       window.location.href = 'index.html';
     }
     
-    // Функция показа админ-панели
     function showAdminPanel() {
       alert('Панель управления администратора\n\nЗдесь могут быть функции управления пользователями, системными настройками и отчетами.');
     }
     
-    // Проверяем авторизацию при загрузке
     document.addEventListener('DOMContentLoaded', updateUserInfo);
   </script>
 </body>

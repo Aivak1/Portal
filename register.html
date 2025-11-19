@@ -84,7 +84,6 @@
     }
     .publish-form button:hover { transform: scale(1.03); }
     
-    /* Стили для формы входа */
     .login-container {
       display: flex;
       flex-direction: column;
@@ -244,7 +243,7 @@
       border-radius: 0 8px 8px 0;
       margin-bottom: 20px;
       font-size: 14px;
-      display: none; /* Скрыто по умолчанию */
+      display: none;
     }
     .credentials-info h3 {
       margin-top: 0;
@@ -370,7 +369,6 @@
   </div>
 
   <script>
-    // Примитивные учетные данные
     const users = {
       admin: {
         username: 'admin',
@@ -384,7 +382,6 @@
       }
     };
     
-    // Функция выбора роли
     function selectRole(role) {
       document.querySelectorAll('.role-option').forEach(option => {
         option.classList.remove('selected');
@@ -393,7 +390,6 @@
       document.getElementById('username').focus();
     }
     
-    // Функция обработки входа
     function handleLogin(event) {
       event.preventDefault();
       
@@ -406,40 +402,33 @@
         return;
       }
       
-      // Проверка учетных данных
       const user = users[username];
       
       if (user && user.password === password && user.role === selectedRole) {
-        // Сохраняем данные пользователя в localStorage
         localStorage.setItem('currentUser', JSON.stringify({
           username: username,
           role: selectedRole
         }));
         
-        // Перенаправляем на main.html
         window.location.href = 'main.html';
       } else {
         alert('Неверное имя пользователя, пароль или роль');
       }
     }
     
-    // Функция выхода
     function logout() {
       localStorage.removeItem('currentUser');
       window.location.href = 'index.html';
     }
     
-    // Функция проверки авторизации
     function checkAuth() {
       const storedUser = localStorage.getItem('currentUser');
       if (storedUser) {
         const user = JSON.parse(storedUser);
-        // Если пользователь уже авторизован, перенаправляем на main.html
         window.location.href = 'main.html';
       }
     }
     
-    // Функция переключения видимости тестовых данных
     function toggleCredentials() {
       const credentialsInfo = document.getElementById('credentialsInfo');
       const button = document.querySelector('.show-credentials');
@@ -453,7 +442,6 @@
       }
     }
     
-    // Проверяем авторизацию при загрузке
     document.addEventListener('DOMContentLoaded', checkAuth);
   </script>
 </body>
