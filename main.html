@@ -17,12 +17,113 @@
       background: linear-gradient(135deg, #f9fbfd 0%, #f0f4f8 100%);
       color: var(--text); display: flex; flex-direction: column; align-items: center;
       padding: 32px 16px; min-height: 100vh; overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
     }
+
+    /* === Админ-панель слева === */
+    .admin-sidebar {
+      position: absolute;
+      top: 32px;
+      left: 16px;
+      width: 240px;
+      background: #fff9f9;
+      border: 1px solid var(--border-light);
+      border-left: 4px solid var(--admin);
+      border-radius: 0 12px 12px 0;
+      padding: 16px;
+      box-shadow: var(--shadow-light);
+      font-size: 14px;
+      display: none;
+    }
+    .admin-sidebar.visible {
+      display: block;
+    }
+    .admin-sidebar h3 {
+      margin: 0 0 10px 0;
+      color: var(--admin);
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .admin-sidebar p {
+      margin: 0 0 12px 0;
+      color: var(--text);
+      font-size: 13px;
+    }
+    .admin-sidebar button {
+      width: 100%;
+      padding: 8px 12px;
+      background: var(--admin);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .admin-sidebar button:hover {
+      background: #d65e43;
+    }
+
+    /* === Основной контент (центрирован) === */
     .page-title {
       font-size: 28px; font-weight: 600; margin-bottom: 32px; text-align: center;
       letter-spacing: -0.5px; opacity: 0; animation: fadeInTitle 0.8s ease-out forwards;
     }
     @keyframes fadeInTitle { to { opacity: 1; } }
+
+    .header-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      max-width: 600px;
+      gap: 20px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      width: 100%;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    .user-details .user-name {
+      font-weight: 600;
+      margin: 0;
+    }
+    .user-details .user-role {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .logout-btn {
+      padding: 8px 16px;
+      background: #f8f9fa;
+      border: 1px solid #d0d7de;
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover {
+      background: #e9ecef;
+    }
+
+    /* === Карточки контента === */
     .card {
       background: var(--bg-light); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       padding: 32px; border-radius: 20px; width: 100%; max-width: 600px;
@@ -33,6 +134,8 @@
       from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); }
     }
     .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+
+    /* Задачи */
     .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
     .filter-btn {
       padding: 6px 12px; background: #f5f8fa; border: 1px solid #d0d7de; border-radius: 14px;
@@ -65,12 +168,26 @@
       transition: transform 0.2s ease;
     }
     .create-task button:hover { transform: scale(1.03); }
+
+    /* Новости */
     .news-feed { display: flex; flex-direction: column; gap: 18px; }
     .news-item {
       background: #f9fbfd; padding: 16px; border-radius: 14px; border-left: 3px solid var(--accent);
       font-size: 15px; color: var(--text);
+      display: flex;
+      gap: 16px;
     }
-    .news-item time { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 6px; }
+    .news-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .news-content { flex: 1; }
+    .news-item time {
+      font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 6px;
+    }
     .publish-form { display: flex; gap: 10px; margin-top: 20px; }
     .publish-form textarea {
       flex: 1; padding: 12px 14px; border: 1px solid #d0d7de; border-radius: 12px; font-size: 15px;
@@ -83,86 +200,54 @@
       transition: transform 0.2s ease;
     }
     .publish-form button:hover { transform: scale(1.03); }
-    
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 600px;
-    }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-    }
-    .user-details {
-      flex: 1;
-    }
-    .user-name {
-      font-weight: 600;
-      margin: 0;
-    }
-    .user-role {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin: 0;
-    }
-    .logout-btn {
-      padding: 8px 16px;
-      background: #f8f9fa;
-      border: 1px solid #d0d7de;
-      border-radius: 8px;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover {
-      background: #e9ecef;
-    }
-    .admin-controls {
-      background: #fff9f9;
-      border-left: 4px solid var(--admin);
-      padding: 15px;
-      border-radius: 0 8px 8px 0;
-      margin-top: 20px;
-    }
-    .admin-controls h3 {
-      margin-top: 0;
-      color: var(--admin);
-    }
   </style>
 </head>
 <body>
-  <h1 class="page-title">Добро пожаловать в систему</h1>
-  
-  <div class="user-info">
-    <div class="avatar" id="userAvatar">U</div>
-    <div class="user-details">
-      <p class="user-name" id="userName">Имя пользователя</p>
-      <p class="user-role" id="userRole">Роль пользователя</p>
-    </div>
-    <button class="logout-btn" onclick="logout()">Выйти</button>
+  <!-- Админ-панель слева (вне центрированного потока) -->
+  <div id="adminSidebar" class="admin-sidebar">
+    <h3>Панель управления</h3>
+    <p>Управление пользователями, настройками и отчётами.</p>
+    <button onclick="showAdminPanel()">Открыть панель</button>
   </div>
-  
+
+  <!-- Центрированный основной контент -->
+  <h1 class="page-title">Добро пожаловать в систему</h1>
+
+  <div class="header-container">
+    <div class="user-info">
+      <div class="avatar" id="userAvatar">U</div>
+      <div class="user-details">
+        <p class="user-name" id="userName">Имя пользователя</p>
+        <p class="user-role" id="userRole">Роль пользователя</p>
+      </div>
+      <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
+  </div>
+
   <div class="card">
-    <h2>Панель управления</h2>
-    <p>Добро пожаловать в систему управления. Здесь вы можете управлять задачами и новостями.</p>
-    
-    <div id="adminControls" class="admin-controls" style="display: none;">
-      <h3>Администраторские функции</h3>
-      <p>Доступ к управлению пользователями, настройкам системы и отчетам.</p>
-      <button class="create-task button" style="background: var(--admin); margin-top: 10px;" onclick="showAdminPanel()">Открыть панель управления</button>
+    <h2>Задачи</h2>
+    <div class="filters">
+      <button class="filter-btn active">Все</button>
+      <button class="filter-btn">Активные</button>
+      <button class="filter-btn">Завершённые</button>
+    </div>
+    <ul class="task-list">
+      <li class="task-item">
+        <div class="task-text">Настроить интеграцию с базой данных MySQL</div>
+        <span class="task-status">В работе</span>
+      </li>
+      <li class="task-item">
+        <div class="task-text">Добавить JWT-авторизацию с 15-минутным токеном</div>
+        <span class="task-status">Готово</span>
+      </li>
+      <li class="task-item">
+        <div class="task-text">Разработать уникальный дизайн формы входа</div>
+        <span class="task-status">Назначено</span>
+      </li>
+    </ul>
+    <div class="create-task">
+      <input type="text" placeholder="Новая задача..." />
+      <button>Добавить</button>
     </div>
   </div>
 
@@ -170,53 +255,68 @@
     <h2>Новости компании</h2>
     <div class="news-feed">
       <div class="news-item">
-        <time>10 ноября 2025</time>
-        <p>Обновлён интерфейс регистрации — теперь с анимацией и плавной подсветкой.</p>
+        <img src="c:\Users\user\Downloads\1763994617.png" alt="Дизайн интерфейса" class="news-image">
+        <div class="news-content">
+          <time>10 ноября 2025</time>
+          <p>Обновлён интерфейс регистрации — теперь с анимацией и плавной подсветкой.</p>
+        </div>
       </div>
       <div class="news-item">
-        <time>9 ноября 2025</time>
-        <p>Реализована авторизация через JWT с 15-минутным токеном.</p>
+        <img src="c:\Users\user\Downloads\1763995056.png" alt="База данных" class="news-image">
+        <div class="news-content">
+          <time>9 ноября 2025</time>
+          <p>Реализована авторизация через JWT с 15-минутным токеном.</p>
+        </div>
       </div>
+      <div class="news-item">
+        <img src="c:\Users\user\Downloads\1763995949.png" alt="Безопасность" class="news-image">
+        <div class="news-content">
+          <time>24 ноября 2025</time>
+          <p>Внедрена двухфакторная аутентификация (2FA) для повышения уровня безопасности аккаунтов.</p>
+        </div>
+      </div>
+    </div>
+    <div class="publish-form">
+      <textarea placeholder="Опубликовать новость..."></textarea>
+      <button>Отправить</button>
     </div>
   </div>
 
   <script>
     function getUserData() {
       const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        return JSON.parse(storedUser);
-      }
-      return null;
+      return storedUser ? JSON.parse(storedUser) : null;
     }
-    
+
     function updateUserInfo() {
       const user = getUserData();
       if (!user) {
         window.location.href = 'index.html';
         return;
       }
-      
+
       document.getElementById('userName').textContent = user.username;
       document.getElementById('userRole').textContent = user.role === 'admin' ? 'Администратор' : 'Сотрудник';
       document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
-      
-      const adminControls = document.getElementById('adminControls');
+
+      // Показываем админ-панель слева только админу
+      const sidebar = document.getElementById('adminSidebar');
       if (user.role === 'admin') {
-        adminControls.style.display = 'block';
+        sidebar.classList.add('visible');
       } else {
-        adminControls.style.display = 'none';
+        sidebar.classList.remove('visible');
       }
     }
-    
+
     function logout() {
       localStorage.removeItem('currentUser');
       window.location.href = 'index.html';
     }
-    
+
     function showAdminPanel() {
       alert('Панель управления администратора\n\nЗдесь могут быть функции управления пользователями, системными настройками и отчетами.');
     }
-    
+
     document.addEventListener('DOMContentLoaded', updateUserInfo);
   </script>
 </body>
