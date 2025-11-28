@@ -9,7 +9,8 @@
       --primary: #0969da; --accent: #4bc9c1; --accent-alt: #765ec0;
       --bg-light: rgba(255, 255, 255, 0.7); --shadow-light: 0 8px 32px rgba(100,120,140,0.08);
       --border-light: rgba(200, 210, 220, 0.4); --text: #1f2937; --text-muted: #6e7781;
-      --admin: #e76f51; --employee: #2a9d8f;
+      --admin: #e76f51; /* оранжево-красный акцент для админа */
+      --employee: #2a9d8f;
     }
     * { box-sizing: border-box; }
     body {
@@ -21,52 +22,77 @@
       position: relative;
     }
 
-
+    /* === Обновлённая минималистичная панель администратора === */
     .admin-sidebar {
       position: absolute;
-      top: 31px;
-      left: 16px;
-      width: 240px;
-      background: #fff9f9;
+      top: 24px;
+      left: 24px;
+      width: 260px;
+      background: #ffffff;
       border: 1px solid var(--border-light);
-      border-left: 4px solid var(--admin);
-      border-radius: 0 12px 12px 0;
-      padding: 16px;
-      box-shadow: var(--shadow-light);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
       font-size: 14px;
       display: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-left: 3px solid var(--admin);
     }
     .admin-sidebar.visible {
       display: block;
     }
     .admin-sidebar h3 {
-      margin: 0 0 10px 0;
+      margin: 0 0 16px 0;
       color: var(--admin);
       font-size: 16px;
       font-weight: 600;
+      letter-spacing: -0.2px;
     }
-    .admin-sidebar p {
-      margin: 0 0 12px 0;
-      color: var(--text);
+    .admin-sidebar h4 {
       font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 16px 0 10px 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .admin-sidebar input {
+      width: 100%;
+      padding: 8px 12px;
+      margin: 6px 0 10px;
+      font-size: 13px;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .admin-sidebar input:focus {
+      border-color: var(--admin);
+      box-shadow: 0 0 0 2px rgba(231, 111, 81, 0.15);
     }
     .admin-sidebar button {
       width: 100%;
       padding: 8px 12px;
-      background: var(--admin);
-      color: white;
-      border: none;
+      background: transparent;
+      color: var(--admin);
+      border: 1px solid var(--admin);
       border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
+      margin-top: 4px;
     }
     .admin-sidebar button:hover {
-      background: #d65e43;
+      background: rgba(231, 111, 81, 0.06);
+    }
+    .admin-sidebar .admin-section {
+      margin-bottom: 14px;
     }
 
-    
     .page-title {
       font-size: 28px; font-weight: 600; margin-bottom: 32px; text-align: center;
       letter-spacing: -0.5px; opacity: 0; animation: fadeInTitle 0.8s ease-out forwards;
@@ -80,6 +106,7 @@
       width: 100%;
       max-width: 600px;
       gap: 20px;
+      margin-top: 12px;
     }
     .user-info {
       display: flex;
@@ -123,7 +150,6 @@
       background: #e9ecef;
     }
 
-    
     .card {
       background: var(--bg-light); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       padding: 32px; border-radius: 20px; width: 100%; max-width: 600px;
@@ -135,7 +161,6 @@
     }
     .card h2 { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
 
-    
     .filters { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
     .filter-btn {
       padding: 6px 12px; background: #f5f8fa; border: 1px solid #d0d7de; border-radius: 14px;
@@ -169,7 +194,6 @@
     }
     .create-task button:hover { transform: scale(1.03); }
 
-    
     .news-feed { display: flex; flex-direction: column; gap: 18px; }
     .news-item {
       background: #f9fbfd; padding: 16px; border-radius: 14px; border-left: 3px solid var(--accent);
@@ -204,13 +228,26 @@
 </head>
 <body>
   
+  <!-- Минималистичная панель управления администратора -->
   <div id="adminSidebar" class="admin-sidebar">
-    <h3>Панель управления</h3>
-    <p>Управление пользователями, настройками и отчётами.</p>
-    <button onclick="showAdminPanel()">Открыть панель</button>
+    <h3>Админ-панель</h3>
+
+    <h4>Пользователи</h4>
+    <div class="admin-section">
+      <input type="text" id="newUsername" placeholder="Имя" />
+      <input type="text" id="newUserRole" placeholder="Роль: admin / employee" />
+      <button onclick="createUser()">➕ Создать</button>
+      
+      <input type="text" id="blockUsername" placeholder="Имя для блокировки" />
+      <button onclick="blockUser()">🔒 Заблокировать</button>
+    </div>
+
+    <h4>Новости</h4>
+    <div class="admin-section">
+      <button onclick="deleteAllNews()">🗑️ Удалить все</button>
+    </div>
   </div>
 
-  
   <h1 class="page-title">Добро пожаловать в систему</h1>
 
   <div class="header-container">
@@ -283,6 +320,7 @@
   </div>
 
   <script>
+    // === Авторизация и пользователь ===
     function getUserData() {
       const storedUser = localStorage.getItem('currentUser');
       return storedUser ? JSON.parse(storedUser) : null;
@@ -299,7 +337,6 @@
       document.getElementById('userRole').textContent = user.role === 'admin' ? 'Администратор' : 'Сотрудник';
       document.getElementById('userAvatar').textContent = user.username.charAt(0).toUpperCase();
 
-      
       const sidebar = document.getElementById('adminSidebar');
       if (user.role === 'admin') {
         sidebar.classList.add('visible');
@@ -313,10 +350,70 @@
       window.location.href = 'index.html';
     }
 
-    function showAdminPanel() {
-      alert('Панель управления администратора\n\nЗдесь могут быть функции управления пользователями, системными настройками и отчетами.');
+    // === Управление пользователями ===
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users') || '[]');
     }
 
+    function saveUsers(users) {
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function createUser() {
+      const username = document.getElementById('newUsername').value.trim();
+      const role = document.getElementById('newUserRole').value.trim().toLowerCase();
+
+      if (!username || !['admin', 'employee'].includes(role)) {
+        alert('Введите корректное имя и роль (admin/employee)');
+        return;
+      }
+
+      const users = getUsers();
+      if (users.some(u => u.username === username)) {
+        alert('Пользователь с таким именем уже существует');
+        return;
+      }
+
+      users.push({ username, role, blocked: false });
+      saveUsers(users);
+      alert(`Пользователь "${username}" создан как ${role}`);
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newUserRole').value = '';
+    }
+
+    function blockUser() {
+      const username = document.getElementById('blockUsername').value.trim();
+      if (!username) {
+        alert('Введите имя пользователя для блокировки');
+        return;
+      }
+
+      const users = getUsers();
+      const user = users.find(u => u.username === username);
+      if (!user) {
+        alert('Пользователь не найден');
+        return;
+      }
+
+      user.blocked = true;
+      saveUsers(users);
+      alert(`Пользователь "${username}" заблокирован`);
+      document.getElementById('blockUsername').value = '';
+    }
+
+    // === Управление новостями ===
+    function deleteAllNews() {
+      if (!confirm('Удалить все новости? Это действие нельзя отменить.')) return;
+
+      localStorage.removeItem('news');
+
+      const newsFeed = document.querySelector('.news-feed');
+      if (newsFeed) newsFeed.innerHTML = '<p style="color: var(--text-muted); font-style: italic;">Нет новостей.</p>';
+
+      alert('Все новости удалены');
+    }
+
+    // === Инициализация ===
     document.addEventListener('DOMContentLoaded', updateUserInfo);
   </script>
 </body>
