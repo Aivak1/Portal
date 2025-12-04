@@ -84,7 +84,7 @@
           <label for="password">Пароль</label>
         </div>
       </div>
-      <button type="submit">Войти</button>
+      <button type="submit" onclick="loginUser(event)">Войти</button>
     </form>
     <div class="links">
       <a href="register.html">Ещё нет аккаунта? Зарегистрироваться</a>
@@ -92,22 +92,29 @@
   </div>
 
   <script>
-    
-    async function handleSubmit(e) {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target));
-      const res = await fetch('/api/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      const result = await res.json();
-      if (result.success) {
-        localStorage.setItem('authToken', result.token);
-        window.location.href = result.redirect;
-      } else {
-        alert(result.error);
+      async function loginUser(event) {
+          event.preventDefault();
+
+          const email = document.querySelector("#email").value;
+          const password = document.querySelector("#password").value;
+
+          const res = await fetch("/api/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password })
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+              localStorage.setItem("token", data.token);
+              window.location.href = "index.html";
+          } else {
+              alert(data.error);
+          }
       }
-    }
   </script>
+
+
 </body>
 </html>
