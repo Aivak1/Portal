@@ -40,10 +40,9 @@ app.post("/register", (req, res) => {
     const sql = "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)";
     db.query(sql, [username, email, password, role], (err, result) => {
         if (err) return res.status(500).send("Ошибка базы данных");
-        res.send(`Пользователь зарегистрирован как ${role}!`);
+        res.redirect("index.html");
     });
 });
-
 
 // Вход
 app.post("/login", (req, res) => {
@@ -59,14 +58,13 @@ app.post("/login", (req, res) => {
             { expiresIn: "1h" }
         );
         res.cookie("token", token, { httpOnly: true });
-        res.send("Вход успешен!");
+        res.redirect("main.html");
     });
 });
 
-
 // Middleware для проверки токена
 function authMiddleware(req, res, next) {
-    const token = req.cookies.token; // читаем токен из cookie
+    const token = req.cookies.token;
 
     if (!token) {
         return res.status(401).send("Требуется авторизация");
@@ -74,21 +72,23 @@ function authMiddleware(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, SECRET_KEY);
-        req.user = decoded; // сохраняем информацию о пользователе в req.user
-        next(); // продолжаем выполнение запроса
+        req.user = decoded;
+        next();
     } catch (err) {
         return res.status(401).send("Неверный или просроченный токен");
     }
 }
 
+// Защищённый маршрут /main — ОСНОВНОЕ ИЗМЕНЕНИЕ
+app.get("/main", authMiddleware, (req, res) => {
+    res.sendFile(__dirname + "/public/main.html");
+});
+
+// Dashboard (оставлен как есть)
 app.get("/dashboard", authMiddleware, (req, res) => {
     res.send(`Привет, пользователь с ID ${req.user.id} и ролью ${req.user.role}`);
 });
 
-
-
 app.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
-//npm install express sqlite3 bcryptjs jsonwebtoken cors body-parser
-// npm install express mysql2 bcryptjs jsonwebtoken cors body-parser
