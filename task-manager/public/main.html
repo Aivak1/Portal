@@ -5,13 +5,12 @@
     <title>Main Page</title>
 </head>
 <body>
-<h1>Welcome, <span id="username"></span>!</h1>
-<p>Your role: <span id="userrole"></span></p>
-<button id="adminBtn" style="display:none">Admin Panel</button>
+
+
 <script>
     async function loadUser() {
         const token = localStorage.getItem('token');
-        if (!token) return window.location.href = 'login.html';
+        if (!token) return window.location.href = 'main.html';
 
         const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + token }});
         if (res.status !== 200) return window.location.href = 'login.html';
