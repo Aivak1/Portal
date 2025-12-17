@@ -1,27 +1,678 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Main Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Главная страница</title>
+    <style>
+        :root {
+            --primary: #0969da;
+            --primary-dark: #0752ac;
+            --accent: #4bc9c1;
+            --accent-alt: #765ec0;
+            --bg-light: rgba(255, 255, 255, 0.85);
+            --shadow-light: 0 8px 32px rgba(100, 120, 140, 0.08);
+            --shadow-card: 0 6px 20px rgba(9, 105, 218, 0.08);
+            --border-light: rgba(200, 210, 220, 0.5);
+            --text: #1f2937;
+            --text-muted: #6e7781;
+            --admin: #e76f51;
+            --employee: #2a9d8f;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --danger: #e76f51;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f8fbff 0%, #f0f5fc 100%);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* === Анимации === */
+        @keyframes fadeInTitle {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInCard {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 36px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            position: relative;
+            opacity: 0;
+            animation: fadeInTitle 0.9s ease-out forwards;
+            color: var(--text);
+        }
+
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--accent);
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        /* === Шапка пользователя === */
+        .header-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 620px;
+            gap: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            box-shadow: var(--shadow-light);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .user-info:hover {
+            box-shadow: 0 10px 24px rgba(100, 120, 140, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease, background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-info:hover .avatar {
+            transform: scale(1.08);
+            background: var(--primary-dark);
+        }
+
+        .user-details .user-name {
+            font-weight: 700;
+            margin: 0;
+            font-size: 18px;
+            line-height: 1.3;
+            color: var(--text);
+        }
+
+        .user-details .user-role {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .logout-btn {
+            padding: 8px 18px;
+            background: #f8fafc;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .logout-btn:hover {
+            background: #eef2f6;
+            border-color: #9ca3af;
+            transform: translateY(-1px);
+        }
+
+        /* === Карточки === */
+        .card {
+            background: var(--bg-light);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 32px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 620px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 32px;
+            animation: fadeInCard 0.6s ease-out;
+            animation-fill-mode: both;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:nth-child(2) { animation-delay: 0.15s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(9, 105, 218, 0.12);
+        }
+
+        .card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            color: var(--text);
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .card h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* === Формы === */
+        .create-task, .publish-form {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .create-task input,
+        .publish-form textarea {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 14px;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .create-task input:focus,
+        .publish-form textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+        }
+
+        .create-task button,
+        .publish-form button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 15px;
+            min-width: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .create-task button:hover,
+        .publish-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(118, 94, 192, 0.3);
+        }
+
+        .publish-form textarea {
+            height: 70px;
+            resize: vertical;
+        }
+
+        /* === Новости === */
+        .news-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .news-item {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 4px solid var(--accent);
+            font-size: 15px;
+            color: var(--text);
+            display: flex;
+            gap: 20px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .news-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(100, 120, 140, 0.1);
+        }
+
+        .news-image {
+            width: 84px;
+            height: 84px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #f8f9fa;
+            border: 1px solid #f0f0f0;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-item time {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        /* === Админ-панель === */
+        .admin-sidebar {
+            position: absolute;
+            top: 32px;
+            left: 20px;
+            width: 270px;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--admin);
+            border-radius: 0 16px 16px 0;
+            padding: 24px;
+            box-shadow: var(--shadow-light);
+            font-size: 14px;
+            display: none;
+            z-index: 10;
+            animation: fadeInCard 0.4s ease-out;
+        }
+
+        .admin-sidebar.visible {
+            display: block;
+        }
+
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Респонсив */
+        @media (max-width: 650px) {
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .logout-btn {
+                align-self: flex-end;
+                margin-left: 0;
+            }
+            .news-item {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .news-image {
+                width: 100%;
+                height: 140px;
+            }
+        }
+    </style>
 </head>
 <body>
 
+<!-- Модальное окно смены аватара -->
+<div id="avatarModal" class="modal">
+    <div class="modal-content card" style="max-width: 420px; margin: auto; animation: fadeInCard 0.4s ease-out;">
+        <h2>Сменить аватар</h2>
+        <p style="margin-bottom: 20px; color: var(--text-muted);">
+            Загрузите изображение с вашего компьютера
+        </p>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <!-- Превью аватара -->
+            <div id="avatarPreview" style="
+                width: 80px; height: 80px; border-radius: 50%;
+                background: var(--bg-light); border: 2px dashed #d1d5db;
+                display: flex; align-items: center; justify-content: center;
+                overflow: hidden;
+            ">
+                <span id="previewPlaceholder" style="color: var(--text-muted); font-size: 12px;">?</span>
+            </div>
+
+            <!-- Скрытое поле загрузки -->
+            <input type="file" id="avatarFileInput" accept="image/*"
+                   style="display: none;" />
+
+            <!-- Кнопка выбора -->
+            <button type="button" onclick="document.getElementById('avatarFileInput').click()"
+                    style="
+                    padding: 10px 20px; background: var(--bg-light);
+                    border: 1px solid var(--border-light); border-radius: 12px;
+                    color: var(--text); font-weight: 500; cursor: pointer;
+                ">
+                Выбрать файл
+            </button>
+
+            <div style="font-size: 12px; color: var(--text-muted);">
+                Поддерживаются: JPG, PNG, GIF
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button onclick="closeAvatarModal()" style="
+                flex: 1; padding: 10px; background: #f8fafc; border: 1px solid #d1d5db;
+                border-radius: 12px; color: var(--text); font-weight: 500;
+            ">Отмена</button>
+            <button onclick="saveAvatarFromFile()" style="
+                flex: 1; padding: 10px; background: linear-gradient(135deg, var(--accent-alt), var(--accent));
+                color: white; border: none; border-radius: 12px; font-weight: 600;
+            ">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalOverlay" class="modal-overlay"></div>
+
+<div id="adminSidebar" class="admin-sidebar">
+    <h3>Панель управления</h3>
+    <h4>Пользователи</h4>
+    <div class="admin-section">
+        <input type="text" id="newUsername" placeholder="Имя пользователя" />
+        <input type="text" id="newUserRole" placeholder="Роль (admin/employee)" />
+        <button onclick="createUser()">Создать</button>
+        <input type="text" id="blockUsername" placeholder="Имя для блокировки" />
+        <button onclick="blockUser()">Заблокировать</button>
+    </div>
+    <h4>Новости</h4>
+    <div class="admin-section">
+        <button onclick="deleteAllNews()">Удалить все новости</button>
+    </div>
+    <button class="secondary" onclick="showAdminPanel()">Подробнее</button>
+</div>
+
+<h1 class="page-title">Добро пожаловать в систему</h1>
+
+<div class="header-container">
+    <div class="user-info">
+        <div class="avatar" id="userAvatar" onclick="openAvatarModal()"></div>
+        <div class="user-details">
+            <p class="user-name" id="userName"></p>
+            <p class="user-role" id="userRole"></p>
+        </div>
+        <button class="logout-btn" onclick="logout()">Выйти</button>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Задачи</h2>
+    <div class="filters" style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+        <button class="filter-btn active" style="padding: 8px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 50px; color: var(--text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.25s ease; min-width: 90px; text-align: center;">Все</button>
+        <button class="filter-btn" style="padding: 8px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 50px; color: var(--text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.25s ease; min-width: 90px; text-align: center;">Активные</button>
+        <button class="filter-btn" style="padding: 8px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 50px; color: var(--text-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.25s ease; min-width: 90px; text-align: center;">Завершённые</button>
+    </div>
+    <ul class="task-list" style="list-style: none; padding: 0; margin: 0;">
+        <li class="task-item" style="padding: 16px 0; border-bottom: 1px solid #f1f3f5; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s ease;">
+            <div class="task-text" style="flex: 1; margin-right: 16px; font-size: 16px; line-height: 1.4;">Настроить интеграцию с базой данных MySQL</div>
+            <span class="task-status" style="background: #ddf4ff; color: var(--primary); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; transition: all 0.25s ease; border: 1px solid #ccecff;">В работе</span>
+        </li>
+        <li class="task-item" style="padding: 16px 0; border-bottom: 1px solid #f1f3f5; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s ease;">
+            <div class="task-text" style="flex: 1; margin-right: 16px; font-size: 16px; line-height: 1.4;">Добавить JWT-авторизацию с 15-минутным токеном</div>
+            <span class="task-status" style="background: #ddf4ff; color: var(--primary); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; transition: all 0.25s ease; border: 1px solid #ccecff;">Готово</span>
+        </li>
+        <li class="task-item" style="padding: 16px 0; border-bottom: none; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s ease;">
+            <div class="task-text" style="flex: 1; margin-right: 16px; font-size: 16px; line-height: 1.4;">Разработать уникальный дизайн формы входа</div>
+            <span class="task-status" style="background: #ddf4ff; color: var(--primary); padding: 6px 14px; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; user-select: none; transition: all 0.25s ease; border: 1px solid #ccecff;">Назначено</span>
+        </li>
+    </ul>
+    <div class="create-task">
+        <input type="text" placeholder="Добавить задачу" />
+        <button>Добавить</button>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Новости компании</h2>
+    <div class="news-feed" id="newsFeed">
+        <div class="news-item">
+            <img src="https://via.placeholder.com/84?text=UI" alt="Дизайн интерфейса" class="news-image">
+            <div class="news-content">
+                <time>10 ноября 2025</time>
+                <p>Обновлён интерфейс регистрации — теперь с анимацией и плавной подсветкой.</p>
+            </div>
+        </div>
+        <div class="news-item">
+            <img src="https://via.placeholder.com/84?text=DB" alt="База данных" class="news-image">
+            <div class="news-content">
+                <time>9 ноября 2025</time>
+                <p>Реализована авторизация через JWT с 15-минутным токеном.</p>
+            </div>
+        </div>
+        <div class="news-item">
+            <img src="https://via.placeholder.com/84?text=2FA" alt="Безопасность" class="news-image">
+            <div class="news-content">
+                <time>24 ноября 2025</time>
+                <p>Внедрена двухфакторная аутентификация (2FA) для повышения уровня безопасности аккаунтов.</p>
+            </div>
+        </div>
+    </div>
+    <div class="publish-form">
+        <textarea placeholder="Опубликовать новость"></textarea>
+        <button>Отправить</button>
+    </div>
+</div>
 
 <script>
-    async function loadUser() {
-        const token = localStorage.getItem('token');
-        if (!token) return window.location.href = 'main.html';
+    // === Загрузка данных пользователя ===
+    async function loadUserData() {
+        try {
+            const res = await fetch('/api/me');
+            if (!res.ok) throw new Error('Не авторизован');
+            const user = await res.json();
 
-        const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + token }});
-        if (res.status !== 200) return window.location.href = 'login.html';
+            document.getElementById('userName').textContent = user.username || 'Пользователь';
+            document.getElementById('userRole').textContent = user.role === 'admin' ? 'Администратор' : 'Сотрудник';
+            document.getElementById('userAvatar').textContent = user.username ? user.username.charAt(0).toUpperCase() : 'U';
 
-        const user = await res.json();
-        document.getElementById('username').innerText = user.name;
-        document.getElementById('userrole').innerText = user.role;
-        if (user.role === 'admin') document.getElementById('adminBtn').style.display = 'block';
+            if (user.role === 'admin') {
+                document.getElementById('adminSidebar').classList.add('visible');
+            }
+
+            // Обновляем аватар после загрузки имени
+            updateAvatarDisplay();
+        } catch (error) {
+            // Если не авторизован — оставляем заглушку
+            document.getElementById('userName').textContent = 'Гость';
+            document.getElementById('userRole').textContent = 'Не авторизован';
+            document.getElementById('userAvatar').textContent = 'G';
+            updateAvatarDisplay();
+        }
     }
 
-    loadUser();
+    function logout() {
+        fetch('/logout', { method: 'POST' })
+            .then(() => window.location.href = '/')
+            .catch(() => window.location.href = '/');
+    }
+
+    function showAdminPanel() {
+        alert('Панель управления администратора\n\nЗдесь реализованы функции:\n— Создание и блокировка пользователей\n— Удаление новостей');
+    }
+
+    // === Управление пользователями (демо) ===
+    function getUsers() {
+        return JSON.parse(localStorage.getItem('users') || '[]');
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function createUser() {
+        const username = document.getElementById('newUsername').value.trim();
+        const role = document.getElementById('newUserRole').value.trim().toLowerCase();
+        if (!username || !['admin', 'employee'].includes(role)) {
+            alert('Введите имя и роль (admin/employee)');
+            return;
+        }
+        const users = getUsers();
+        if (users.some(u => u.username === username)) {
+            alert('Пользователь уже существует');
+            return;
+        }
+        users.push({ username, role, blocked: false });
+        saveUsers(users);
+        alert(`✅ Пользователь "${username}" создан`);
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newUserRole').value = '';
+    }
+
+    function blockUser() {
+        const username = document.getElementById('blockUsername').value.trim();
+        if (!username) {
+            alert('Укажите имя пользователя');
+            return;
+        }
+        const users = getUsers();
+        const user = users.find(u => u.username === username);
+        if (!user) {
+            alert('Пользователь не найден');
+            return;
+        }
+        user.blocked = true;
+        saveUsers(users);
+        alert(`🔒 Пользователь "${username}" заблокирован`);
+        document.getElementById('blockUsername').value = '';
+    }
+
+    function deleteAllNews() {
+        if (!confirm('🗑️ Удалить все новости? Действие необратимо.')) return;
+        document.getElementById('newsFeed').innerHTML = '<p style="color: var(--text-muted); font-style: italic; padding: 20px; text-align: center;">Нет новостей.</p>';
+        localStorage.removeItem('news');
+        alert('Все новости удалены');
+    }
+
+
+    function getAvatarData() {
+        const username = document.getElementById('userName').textContent || 'user';
+        const data = localStorage.getItem('avatar_' + username);
+        return data ? JSON.parse(data) : { mode: 'letter', url: null };
+    }
+
+    function saveAvatarData(data) {
+        const username = document.getElementById('userName').textContent || 'user';
+        localStorage.setItem('avatar_' + username, JSON.stringify(data));
+    }
+
+    function updateAvatarDisplay() {
+        const username = document.getElementById('userName').textContent || 'U';
+        const avatarEl = document.getElementById('userAvatar');
+        const avatarData = getAvatarData();
+
+        if (avatarData.mode === 'image' && avatarData.url) {
+            avatarEl.style.background = 'none';
+            avatarEl.innerHTML = `<img src="${avatarData.url}" alt="Аватар" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+        } else {
+            const letter = username.charAt(0).toUpperCase() || 'U';
+            avatarEl.style.background = 'var(--primary)';
+            avatarEl.style.display = 'flex';
+            avatarEl.style.alignItems = 'center';
+            avatarEl.style.justifyContent = 'center';
+            avatarEl.innerHTML = letter;
+            avatarEl.style.color = 'white';
+            avatarEl.style.fontWeight = '600';
+            avatarEl.style.fontSize = '18px';
+        }
+    }
+
+    function openAvatarModal() {
+        const username = document.getElementById('userName').textContent || 'User';
+        const letter = username.charAt(0).toUpperCase() || 'U';
+        document.getElementById('letterPreview').textContent = letter;
+        document.getElementById('avatarModal').style.display = 'flex';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+
+    function closeAvatarModal() {
+        document.getElementById('avatarModal').style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    function previewImage(url) {
+        const preview = document.getElementById('imagePreview');
+        if (url && url.trim()) {
+            preview.innerHTML = `<img src="${url}" alt="?" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+        } else {
+            preview.innerHTML = '?';
+            preview.style.display = 'flex';
+            preview.style.alignItems = 'center';
+            preview.style.justifyContent = 'center';
+            preview.style.color = 'var(--text-muted)';
+        }
+    }
+
+    function setAvatarMode(mode) {
+        if (mode === 'letter') {
+            saveAvatarData({ mode: 'letter', url: null });
+        } else if (mode === 'image') {
+            const url = document.getElementById('avatarUrl').value.trim();
+            if (!url) {
+                alert('Укажите URL изображения или выберите "Буква имени"');
+                return;
+            }
+            saveAvatarData({ mode: 'image', url: url });
+        }
+        updateAvatarDisplay();
+        closeAvatarModal();
+    }
+
+    // Загрузка при старте
+    document.addEventListener('DOMContentLoaded', loadUserData);
 </script>
 </body>
 </html>

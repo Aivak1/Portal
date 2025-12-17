@@ -15,7 +15,7 @@ app.use(express.static("public")); // Для HTML файлов
 
 // Настройка подключения к MySQL
 const db = mysql.createConnection({
-    host: "db", // имя контейнера MySQL в Docker Compose
+    host: "db",
     user: "root",
     password: "rootpassword",
     database: "testdb",
@@ -62,7 +62,7 @@ app.post("/login", (req, res) => {
     });
 });
 
-// Middleware для проверки токена
+
 function authMiddleware(req, res, next) {
     const token = req.cookies.token;
 
@@ -79,12 +79,24 @@ function authMiddleware(req, res, next) {
     }
 }
 
-// Защищённый маршрут /main — ОСНОВНОЕ ИЗМЕНЕНИЕ
+
+app.get("/api/me", authMiddleware, (req, res) => {
+    const sql = "SELECT id, username, email, role FROM users WHERE id = ?";
+    db.query(sql, [req.user.id], (err, results) => {
+        if (err || results.length === 0) {
+            return res.status(404).json({ error: "Пользователь не найден" });
+        }
+        const { id, username, email, role } = results[0];
+        res.json({ id, username, email, role });
+    });
+});
+
+
 app.get("/main", authMiddleware, (req, res) => {
     res.sendFile(__dirname + "/public/main.html");
 });
 
-// Dashboard (оставлен как есть)
+
 app.get("/dashboard", authMiddleware, (req, res) => {
     res.send(`Привет, пользователь с ID ${req.user.id} и ролью ${req.user.role}`);
 });
